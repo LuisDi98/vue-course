@@ -1,0 +1,43 @@
+# Node modules
+node_modules/
+**/node_modules/
+
+# Build output
+dist/
+build/
+*.log
+
+# Local env files
+.env
+.env.*
+
+# VSCode settings
+.vscode/
+
+# Mac system files
+.DS_Store
+
+# Vue specific
+*.local
+*.cache
+*.bak
+*.tmp
+*.swp
+
+# Coverage reports
+coverage/
+
+# Yarn
+yarn-error.log
+
+# npm
+npm-debug.log
+
+# IDEs
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Misc
+*.tgz
+# End Generation Here
