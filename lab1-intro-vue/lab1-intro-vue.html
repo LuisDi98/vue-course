@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio 1: Fundamentos de Vue.js</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; container: inline-size; margin: 2rem; }
+        #app { max-width: 600px; margin: 0 auto; padding: 2rem; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { color: #42b883; }
+        h2 { color: #35495e; }
+        input[type="text"] { padding: 8px; margin-right: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 8px 15px; background-color: #42b883; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #35495e; }
+        ul { list-style-type: none; padding: 0; }
+        li { background-color: #fff; padding: 10px; margin-top: 8px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .completed { text-decoration: line-through; color: #999; }
+        .urgent { font-weight: bold; color: #d9534f; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <h1>{{ nombreDelProyecto }}</h1>
+
+    <h2>Contador de Clicks: {{ contador }}</h2>
+    <button @click="incrementar">Incrementar</button>
+
+    <hr>
+
+    <h2>Lista de Tareas</h2>
+
+    <input
+        type="text"
+        v-model="nuevaTarea"
+        placeholder="Añadir nueva tarea..."
+        @keyup.enter="agregarTarea"
+    />
+    <button @click="agregarTarea">Agregar</button>
+
+    <div v-if="tareas.length === 0">
+        <p>¡Felicidades! No hay tareas pendientes.</p>
+    </div>
+    <ul v-else>
+        <li v-for="(tarea, index) in tareas" :key="index">
+            
+            <span :class="{ completed: tarea.completada, urgent: tarea.texto.toLowerCase().includes('urgente') }">
+                {{ tarea.texto }}
+            </span>
+            
+            <div>
+                 <button @click="marcarCompletada(index)" v-show="!tarea.completada">Completar</button>
+                <button @click="eliminarTarea(index)">Eliminar</button>
+            </div>
+        </li>
+    </ul>
+
+</div>
+
+<script>
+    // 3. Aquí comienza la lógica de nuestra aplicación Vue.
+
+    // Obtenemos las funciones necesarias desde el objeto global 'Vue'.
+    const { createApp, ref, onMounted } = Vue
+
+    // Creamos la instancia de la aplicación.
+    createApp({
+        // La función `setup` es el punto de entrada de la Composition API de Vue 3.
+        setup() {
+            // ----- ESTADO REACTIVO -----
+            // `ref` crea una referencia reactiva. Cuando su valor cambia,
+            // la interfaz de usuario se actualiza automáticamente.
+
+            const nombreDelProyecto = ref('Mi Panel de Tareas Interactivo');
+            const contador = ref(0);
+            const nuevaTarea = ref(''); // Para el input v-model
+            const tareas = ref([
+                { texto: 'Aprender Vue.js', completada: true },
+                { texto: 'Hacer este laboratorio', completada: false },
+                { texto: 'Revisar la documentación oficial', completada: false },
+                { texto: 'Tarea Urgente: Descansar', completada: false },
+            ]);
+
+            // ----- MÉTODOS -----
+            // Funciones que modifican el estado de la aplicación.
+
+            function incrementar() {
+                contador.value++; // Accedemos al valor de un 'ref' con .value
+            }
+
+            function agregarTarea() {
+                if (nuevaTarea.value.trim() !== '') {
+                    tareas.value.push({ texto: nuevaTarea.value, completada: false });
+                    nuevaTarea.value = ''; // Limpiamos el input
+                }
+            }
+            
+            function eliminarTarea(index) {
+                // `splice` modifica el array original, y Vue reaccionará al cambio.
+                tareas.value.splice(index, 1);
+            }
+
+            function marcarCompletada(index) {
+                tareas.value[index].completada = true;
+            }
+
+            // ----- CICLO DE VIDA -----
+            // `onMounted` es un "hook" que se ejecuta después de que el componente
+            // ha sido insertado en el DOM. Es útil para operaciones iniciales.
+            onMounted(() => {
+                console.log('🚀 ¡La aplicación Vue se ha montado correctamente en el DOM!');
+                // Puedes, por ejemplo, cargar datos desde una API aquí.
+            });
+
+            // ----- RETORNO -----
+            // Exponemos las variables y métodos al template (la parte HTML).
+            return {
+                nombreDelProyecto,
+                contador,
+                nuevaTarea,
+                tareas,
+                incrementar,
+                agregarTarea,
+                eliminarTarea,
+                marcarCompletada
+            };
+        }
+    }).mount('#app'); // 4. Montamos la aplicación en el div con id="app".
+
+</script>
+</body>
+</html>
